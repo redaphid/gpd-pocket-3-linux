@@ -29,14 +29,27 @@ This installs a udev rule + systemd service that triggers on EITHER:
 
 Test by connecting the Pocket 3 to a server via the KVM module.
 
+### How Auto-Launch Works
+
+The auto-launch system uses a chain of services to properly launch GUI apps from hardware events:
+
+1. **udev rule** (`99-kvm-autolaunch.rules`) - Detects hardware events (capture card connect OR keyboard disconnect)
+2. **System service** (`kvm-display-auto@.service`) - Triggered by udev, runs as root
+3. **Helper script** (`kvm-auto-launch-helper.sh`) - Uses `machinectl` to bridge to user session
+4. **User service** (`kvm-display-user.service`) - Runs in your graphical session with proper Wayland/X11 environment
+5. **Launch script** (`kvm-display.sh`) - Actually launches mpv with the capture card
+
+This architecture properly handles Wayland sessions, XDG_RUNTIME_DIR, DBUS, and other session variables.
+
 ### Files
 - `kvm-display.sh` - Main launch script
 - `kvm-display.desktop` - Desktop launcher
 - `kvm-display.service` - Systemd service for manual use
 - `mpv-kvm.conf` - MPV configuration
 - `99-kvm-autolaunch.rules` - Udev rule for device detection
-- `kvm-display-auto@.service` - Systemd service triggered by udev
-- `kvm-auto-launch-helper.sh` - Helper script for launching
+- `kvm-display-auto@.service` - System service triggered by udev
+- `kvm-display-user.service` - User service that runs in graphical session
+- `kvm-auto-launch-helper.sh` - Helper script using machinectl
 - `install-autolaunch.sh` - Installer for auto-launch
 
 ### Helpful Links
