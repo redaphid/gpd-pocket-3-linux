@@ -1,0 +1,14 @@
+[Unit]
+Description=GPD Pocket 3 KVM Display
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/home/redaphid/kvm-display.sh
+Restart=on-failure
+RestartSec=5
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=default.target

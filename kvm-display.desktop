@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=KVM
+Comment=GPD Pocket 3 KVM Module - Server Display
+GenericName=KVM Display
+Icon=video-display
+Exec=/home/redaphid/Projects/gpd-pocket-3-linux/kvm-display.sh
+Terminal=false
+Categories=Video;AudioVideo;System;
+Keywords=kvm;capture;hdmi;server;display;
