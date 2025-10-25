@@ -1,28 +1,22 @@
 #!/bin/bash
-# Helper script for udev to launch KVM display
-# This script finds the active user session and launches the KVM display
+# Helper script for systemd/udev to launch KVM display
+# This script uses systemd-run to launch in the user's graphical session
 
-# Find the active user and their display
+# Configuration
 USER_NAME="redaphid"
-DISPLAY_NUM=":0"
+USER_UID=$(id -u "$USER_NAME")
+SCRIPT_PATH="/home/redaphid/Projects/pocket-3-config/kvm-display.sh"
 
-# Get the user's DBUS session
-DBUS_SESSION=$(ps -u "$USER_NAME" e | grep -Eo 'dbus-daemon.*address=unix:abstract=/tmp/dbus-[A-Za-z0-9]{10}' | tail -n 1 | grep -Eo 'unix:abstract=/tmp/dbus-[A-Za-z0-9]{10}')
+# Small delay to ensure device is fully initialized
+sleep 0.5
 
-if [ -z "$DBUS_SESSION" ]; then
-    # Fallback: try to find DBUS_SESSION_BUS_ADDRESS from environment
-    DBUS_SESSION=$(grep -z DBUS_SESSION_BUS_ADDRESS /proc/$(pgrep -u "$USER_NAME" gnome-session | head -n1)/environ 2>/dev/null | cut -d= -f2-)
-fi
-
-# Launch the KVM display script as the user
-export DISPLAY="$DISPLAY_NUM"
-export DBUS_SESSION_BUS_ADDRESS="$DBUS_SESSION"
-export XAUTHORITY="/home/$USER_NAME/.Xauthority"
-
-# Small delay to ensure device is ready
-sleep 1
-
-# Launch as the user
-su - "$USER_NAME" -c "DISPLAY=$DISPLAY_NUM DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION /home/redaphid/Projects/pocket-3-config/kvm-display.sh" &
+# Use systemd-run to launch in user session
+# This properly inherits the graphical environment
+systemd-run --machine="$USER_NAME@.host" \
+    --user \
+    --scope \
+    --collect \
+    --unit=kvm-display-manual \
+    "$SCRIPT_PATH"
 
 exit 0
