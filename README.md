@@ -13,20 +13,21 @@ Launch the KVM module display by pressing Super and typing "kvm", or run:
 - Ultra-low latency (~50ms)
 - 1920x1080 @ 60fps
 
-### Auto-Launch on Disconnection (Optional)
-Install event-driven auto-launch when you disconnect from the server:
+### Auto-Launch When Using as KVM (Optional)
+Install event-driven auto-launch when you use the Pocket 3 as a KVM:
 ```bash
 cd ~/Projects/pocket-3-config
 sudo ./install-autolaunch.sh
 ```
 
-This installs a udev rule + systemd service that:
-- Triggers instantly when video device is REMOVED (server disconnected)
+This installs a udev rule + systemd service that triggers on EITHER:
+- HDMI Capture device connects (video from server appears)
+- Pocket 3 keyboard disconnects (keyboard switches to server control)
 - Launches the KVM display automatically on your Pocket 3
-- Event-driven (no polling or background processes)
+- Event-driven via udev + systemd (no polling or background processes)
 - Works regardless of which `/dev/videoX` the device gets assigned
 
-Test by disconnecting the HDMI cable from the server to the KVM module.
+Test by connecting the Pocket 3 to a server via the KVM module.
 
 ### Files
 - `kvm-display.sh` - Main launch script

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install script for KVM auto-launch via udev + systemd
-# This sets up event-driven launching of the KVM display when the HDMI Capture device is disconnected
+# This sets up event-driven launching of the KVM display when using Pocket 3 as KVM
 
 set -e
 
@@ -40,12 +40,14 @@ udevadm trigger
 echo ""
 echo "✓ Installation complete!"
 echo ""
-echo "The KVM auto-launch is now active and will:"
-echo "  • Trigger instantly when HDMI Capture device (3188:1000) is REMOVED"
-echo "  • Launch KVM display automatically when you disconnect from the server"
-echo "  • Event-driven via udev + systemd (no polling or background processes)"
+echo "The KVM auto-launch is now active and will trigger when EITHER:"
+echo "  • HDMI Capture device connects (3188:1000)"
+echo "  • Pocket 3 keyboard disconnects (258a:000c)"
 echo ""
-echo "Test by disconnecting the HDMI cable from the server to the KVM module."
+echo "Launches KVM display automatically when you use the Pocket 3 as a KVM."
+echo "Event-driven via udev + systemd (no polling or background processes)."
+echo ""
+echo "Test by connecting the Pocket 3 to a server via the KVM module."
 echo ""
 echo "To uninstall:"
 echo "  sudo rm /etc/udev/rules.d/99-kvm-autolaunch.rules"

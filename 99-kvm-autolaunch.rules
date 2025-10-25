@@ -1,5 +1,5 @@
-# Udev rule to automatically launch KVM display when HDMI Capture device is DISCONNECTED
-# GPD Pocket 3 KVM Module - XF HDMI Capture (USB Vendor:Product 3188:1000)
+# Udev rule to automatically launch KVM display when Pocket 3 is used as KVM
+# GPD Pocket 3 KVM Module
 #
 # Installation:
 #   sudo cp 99-kvm-autolaunch.rules /etc/udev/rules.d/
@@ -9,8 +9,12 @@
 #   sudo udevadm control --reload-rules
 #   sudo systemctl daemon-reload
 #
-# This rule triggers when the HDMI Capture video device is REMOVED
-# Launches KVM display when you disconnect from server
+# Triggers when EITHER:
+#   1. HDMI Capture device is connected (video from server appears)
+#   2. Pocket 3 keyboard disconnects (keyboard switches to server control)
 
-# Match HDMI Capture device by USB vendor/product ID and trigger on REMOVE
-SUBSYSTEM=="video4linux", ATTRS{idVendor}=="3188", ATTRS{idProduct}=="1000", ACTION=="remove", TAG+="systemd", ENV{SYSTEMD_WANTS}="kvm-display-auto@%k.service"
+# Trigger 1: HDMI Capture device CONNECTED (XF HDMI Capture - USB 3188:1000)
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="3188", ATTRS{idProduct}=="1000", ACTION=="add", TAG+="systemd", ENV{SYSTEMD_WANTS}="kvm-display-auto@%k.service"
+
+# Trigger 2: Pocket 3 keyboard REMOVED (HAILUCK keyboard - USB 258a:000c)
+SUBSYSTEM=="usb", ATTR{idVendor}=="258a", ATTR{idProduct}=="000c", ACTION=="remove", TAG+="systemd", ENV{SYSTEMD_WANTS}="kvm-display-auto@%k.service"
