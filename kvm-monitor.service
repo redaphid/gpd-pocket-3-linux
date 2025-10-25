@@ -1,0 +1,16 @@
+[Unit]
+Description=GPD Pocket 3 KVM Monitor Service
+Documentation=https://github.com/redaphid/pocket-3-config
+After=graphical.target
+Wants=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/kvm-monitor.sh
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

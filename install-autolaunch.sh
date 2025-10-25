@@ -1,10 +1,12 @@
 #!/bin/bash
-# Install script for KVM auto-launch udev rule
+# Install script for KVM auto-launch monitoring service
 # This sets up automatic launching of the KVM display when the HDMI Capture device is connected
 
 set -e
 
-echo "Installing KVM auto-launch udev rule..."
+echo "KVM Auto-Launch Installer"
+echo "=========================="
+echo ""
 
 # Check if running with sudo
 if [ "$EUID" -ne 0 ]; then
@@ -16,27 +18,41 @@ fi
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Copy helper script to /usr/local/bin
+# Install helper script (used by both methods)
 echo "Installing helper script..."
 cp "$SCRIPT_DIR/kvm-auto-launch-helper.sh" /usr/local/bin/
 chmod +x /usr/local/bin/kvm-auto-launch-helper.sh
 
-# Copy udev rule
-echo "Installing udev rule..."
-cp "$SCRIPT_DIR/99-kvm-autolaunch.rules" /etc/udev/rules.d/
+# Install monitoring script
+echo "Installing monitoring service..."
+cp "$SCRIPT_DIR/kvm-monitor.sh" /usr/local/bin/
+chmod +x /usr/local/bin/kvm-monitor.sh
 
-# Reload udev rules
-echo "Reloading udev rules..."
-udevadm control --reload-rules
-udevadm trigger
+# Install systemd service
+echo "Installing systemd service..."
+cp "$SCRIPT_DIR/kvm-monitor.service" /etc/systemd/system/
+
+# Reload systemd and enable service
+echo "Enabling KVM monitor service..."
+systemctl daemon-reload
+systemctl enable kvm-monitor.service
+systemctl start kvm-monitor.service
 
 echo ""
 echo "✓ Installation complete!"
 echo ""
-echo "The KVM display will now automatically launch when you connect the HDMI cable"
-echo "to the KVM module."
+echo "The KVM monitor service is now running and will:"
+echo "  • Start automatically at boot"
+echo "  • Watch for HDMI Capture device (3188:1000)"
+echo "  • Launch KVM display when device is detected"
+echo ""
+echo "Service status:"
+systemctl status kvm-monitor.service --no-pager -l || true
 echo ""
 echo "To uninstall:"
-echo "  sudo rm /etc/udev/rules.d/99-kvm-autolaunch.rules"
+echo "  sudo systemctl stop kvm-monitor.service"
+echo "  sudo systemctl disable kvm-monitor.service"
+echo "  sudo rm /etc/systemd/system/kvm-monitor.service"
+echo "  sudo rm /usr/local/bin/kvm-monitor.sh"
 echo "  sudo rm /usr/local/bin/kvm-auto-launch-helper.sh"
-echo "  sudo udevadm control --reload-rules"
+echo "  sudo systemctl daemon-reload"
