@@ -18,6 +18,23 @@ fi
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Clean up old files/services first
+echo "Cleaning up old installations..."
+
+# Stop and disable old polling-based monitor service if it exists
+if systemctl is-enabled kvm-monitor.service 2>/dev/null; then
+    echo "  Disabling old kvm-monitor.service..."
+    systemctl stop kvm-monitor.service 2>/dev/null || true
+    systemctl disable kvm-monitor.service 2>/dev/null || true
+fi
+
+# Remove old files
+rm -f /etc/systemd/system/kvm-monitor.service
+rm -f /usr/local/bin/kvm-monitor.sh
+rm -f /etc/udev/rules.d/99-kvm-autolaunch.rules.old
+
+echo "  Old files removed (if any existed)"
+
 # Install helper script
 echo "Installing helper script..."
 cp "$SCRIPT_DIR/kvm-auto-launch-helper.sh" /usr/local/bin/
