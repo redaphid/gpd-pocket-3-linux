@@ -7,12 +7,29 @@ Launch the KVM module display by pressing Super and typing "kvm", or run:
 ~/Projects/pocket-3-config/kvm-display.sh
 ```
 
+### Features
 - Auto-detects HDMI Capture device
 - Fullscreen by default
 - Ultra-low latency (~50ms)
 - 1920x1080 @ 60fps
 
-Files: `kvm-display.sh`, `kvm-display.desktop`, `kvm-display.service`, `mpv-kvm.conf`
+### Auto-Launch on Connection (Optional)
+Automatically launch the KVM display when you plug in the HDMI cable:
+```bash
+cd ~/Projects/pocket-3-config
+sudo ./install-autolaunch.sh
+```
+
+This installs a udev rule that detects when the HDMI Capture device is connected and automatically opens the display in fullscreen.
+
+### Files
+- `kvm-display.sh` - Main launch script
+- `kvm-display.desktop` - Desktop launcher
+- `kvm-display.service` - Systemd service
+- `mpv-kvm.conf` - MPV configuration
+- `99-kvm-autolaunch.rules` - Udev rule for auto-launch
+- `kvm-auto-launch-helper.sh` - Helper script for udev
+- `install-autolaunch.sh` - Installer for auto-launch feature
 
 ### Helpful Links
 [setting up hibernate](https://abskmj.github.io/notes/posts/pop-os/enable-hibernate)
