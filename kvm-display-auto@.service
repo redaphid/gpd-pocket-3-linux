@@ -1,0 +1,10 @@
+[Unit]
+Description=Auto-launch KVM display for %I
+Documentation=https://github.com/redaphid/pocket-3-config
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/kvm-auto-launch-helper.sh
+RemainAfterExit=no
+StandardOutput=journal
+StandardError=journal

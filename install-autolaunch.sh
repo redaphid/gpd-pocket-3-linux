@@ -1,6 +1,6 @@
 #!/bin/bash
-# Install script for KVM auto-launch monitoring service
-# This sets up automatic launching of the KVM display when the HDMI Capture device is connected
+# Install script for KVM auto-launch via udev + systemd
+# This sets up event-driven launching of the KVM display when the HDMI Capture device is connected
 
 set -e
 
@@ -18,41 +18,38 @@ fi
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Install helper script (used by both methods)
+# Install helper script
 echo "Installing helper script..."
 cp "$SCRIPT_DIR/kvm-auto-launch-helper.sh" /usr/local/bin/
 chmod +x /usr/local/bin/kvm-auto-launch-helper.sh
 
-# Install monitoring script
-echo "Installing monitoring service..."
-cp "$SCRIPT_DIR/kvm-monitor.sh" /usr/local/bin/
-chmod +x /usr/local/bin/kvm-monitor.sh
-
-# Install systemd service
+# Install systemd service template
 echo "Installing systemd service..."
-cp "$SCRIPT_DIR/kvm-monitor.service" /etc/systemd/system/
+cp "$SCRIPT_DIR/kvm-display-auto@.service" /etc/systemd/system/
 
-# Reload systemd and enable service
-echo "Enabling KVM monitor service..."
+# Install udev rule
+echo "Installing udev rule..."
+cp "$SCRIPT_DIR/99-kvm-autolaunch.rules" /etc/udev/rules.d/
+
+# Reload systemd and udev
+echo "Reloading systemd and udev..."
 systemctl daemon-reload
-systemctl enable kvm-monitor.service
-systemctl start kvm-monitor.service
+udevadm control --reload-rules
+udevadm trigger
 
 echo ""
 echo "✓ Installation complete!"
 echo ""
-echo "The KVM monitor service is now running and will:"
-echo "  • Start automatically at boot"
-echo "  • Watch for HDMI Capture device (3188:1000)"
-echo "  • Launch KVM display when device is detected"
+echo "The KVM auto-launch is now active and will:"
+echo "  • Trigger instantly when HDMI Capture device (3188:1000) is detected"
+echo "  • Launch KVM display via udev event + systemd service"
+echo "  • No polling - event-driven only"
 echo ""
-echo "Service status:"
-systemctl status kvm-monitor.service --no-pager -l || true
+echo "Test by unplugging and replugging the HDMI cable."
 echo ""
 echo "To uninstall:"
-echo "  sudo systemctl stop kvm-monitor.service"
-echo "  sudo systemctl disable kvm-monitor.service"
-echo "  sudo rm /etc/systemd/system/kvm-monitor.service"
-echo "  sudo rm /usr/local/bin/kvm-monitor.sh"
+echo "  sudo rm /etc/udev/rules.d/99-kvm-autolaunch.rules"
+echo "  sudo rm /etc/systemd/system/kvm-display-auto@.service"
 echo "  sudo rm /usr/local/bin/kvm-auto-launch-helper.sh"
+echo "  sudo udevadm control --reload-rules"
 echo "  sudo systemctl daemon-reload"

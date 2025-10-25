@@ -13,34 +13,30 @@ Launch the KVM module display by pressing Super and typing "kvm", or run:
 - Ultra-low latency (~50ms)
 - 1920x1080 @ 60fps
 
-### Auto-Launch Monitoring Service (Optional)
-Install a background service that monitors for HDMI connection and auto-launches the display:
+### Auto-Launch on Connection (Optional)
+Install event-driven auto-launch when HDMI cable is plugged in:
 ```bash
 cd ~/Projects/pocket-3-config
 sudo ./install-autolaunch.sh
 ```
 
-This installs a systemd service that:
-- Starts automatically at boot
-- Continuously monitors for the HDMI Capture device (USB 3188:1000)
-- Launches the KVM display when device is detected
+This installs a udev rule + systemd service that:
+- Triggers instantly when HDMI Capture device (USB 3188:1000) is detected
+- Launches the KVM display automatically
+- Event-driven (no polling or background processes)
 - Works regardless of which `/dev/videoX` the device gets assigned
 
-Check service status:
-```bash
-sudo systemctl status kvm-monitor.service
-```
+Test by unplugging and replugging the HDMI cable to the KVM module.
 
 ### Files
 - `kvm-display.sh` - Main launch script
 - `kvm-display.desktop` - Desktop launcher
 - `kvm-display.service` - Systemd service for manual use
 - `mpv-kvm.conf` - MPV configuration
-- `kvm-monitor.service` - Systemd monitoring service
-- `kvm-monitor.sh` - Background monitoring script
+- `99-kvm-autolaunch.rules` - Udev rule for device detection
+- `kvm-display-auto@.service` - Systemd service triggered by udev
 - `kvm-auto-launch-helper.sh` - Helper script for launching
-- `99-kvm-autolaunch.rules` - Udev rule (alternative method)
-- `install-autolaunch.sh` - Installer for monitoring service
+- `install-autolaunch.sh` - Installer for auto-launch
 
 ### Helpful Links
 [setting up hibernate](https://abskmj.github.io/notes/posts/pop-os/enable-hibernate)

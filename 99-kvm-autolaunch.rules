@@ -4,11 +4,13 @@
 # Installation:
 #   sudo cp 99-kvm-autolaunch.rules /etc/udev/rules.d/
 #   sudo cp kvm-auto-launch-helper.sh /usr/local/bin/
+#   sudo cp kvm-display-auto@.service /etc/systemd/system/
 #   sudo chmod +x /usr/local/bin/kvm-auto-launch-helper.sh
 #   sudo udevadm control --reload-rules
+#   sudo systemctl daemon-reload
 #
 # This rule triggers when the HDMI Capture video device is added
-# It matches by USB vendor/product ID to avoid relying on specific device names
+# It matches by USB vendor/product ID and triggers a systemd service
 
-# Match HDMI Capture device by USB vendor/product ID
-SUBSYSTEM=="video4linux", ATTRS{idVendor}=="3188", ATTRS{idProduct}=="1000", ACTION=="add", RUN+="/usr/local/bin/kvm-auto-launch-helper.sh"
+# Match HDMI Capture device by USB vendor/product ID and trigger systemd service
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="3188", ATTRS{idProduct}=="1000", ACTION=="add", TAG+="systemd", ENV{SYSTEMD_WANTS}="kvm-display-auto@%k.service"
