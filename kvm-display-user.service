@@ -1,0 +1,8 @@
+[Unit]
+Description=KVM Display for Pocket 3
+Documentation=https://github.com/redaphid/pocket-3-config
+
+[Service]
+Type=simple
+ExecStart=/home/redaphid/Projects/pocket-3-config/kvm-display.sh
+Restart=no

@@ -40,8 +40,15 @@ echo "Installing helper script..."
 cp "$SCRIPT_DIR/kvm-auto-launch-helper.sh" /usr/local/bin/
 chmod +x /usr/local/bin/kvm-auto-launch-helper.sh
 
-# Install systemd service template
-echo "Installing systemd service..."
+# Install systemd USER service (runs in user's graphical session)
+echo "Installing user systemd service..."
+USER_SYSTEMD_DIR="/home/redaphid/.config/systemd/user"
+mkdir -p "$USER_SYSTEMD_DIR"
+cp "$SCRIPT_DIR/kvm-display-user.service" "$USER_SYSTEMD_DIR/"
+chown -R redaphid:redaphid "$USER_SYSTEMD_DIR"
+
+# Install systemd SYSTEM service template (triggered by udev)
+echo "Installing system systemd service..."
 cp "$SCRIPT_DIR/kvm-display-auto@.service" /etc/systemd/system/
 
 # Install udev rule
@@ -51,6 +58,7 @@ cp "$SCRIPT_DIR/99-kvm-autolaunch.rules" /etc/udev/rules.d/
 # Reload systemd and udev
 echo "Reloading systemd and udev..."
 systemctl daemon-reload
+sudo -u redaphid systemctl --user daemon-reload
 udevadm control --reload-rules
 udevadm trigger
 
