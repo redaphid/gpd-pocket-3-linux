@@ -1,5 +1,5 @@
 # Udev rule to automatically launch KVM display when HDMI Capture device is connected
-# GPD Pocket 3 KVM Module - XF HDMI Capture
+# GPD Pocket 3 KVM Module - XF HDMI Capture (USB Vendor:Product 3188:1000)
 #
 # Installation:
 #   sudo cp 99-kvm-autolaunch.rules /etc/udev/rules.d/
@@ -8,6 +8,7 @@
 #   sudo udevadm control --reload-rules
 #
 # This rule triggers when the HDMI Capture video device is added
+# It matches by USB vendor/product ID to avoid relying on specific device names
 
-# Match HDMI Capture device by name and launch helper script
-SUBSYSTEM=="video4linux", ATTR{name}=="HDMI Capture: HDMI Capture", ACTION=="add", RUN+="/usr/local/bin/kvm-auto-launch-helper.sh"
+# Match HDMI Capture device by USB vendor/product ID
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="3188", ATTRS{idProduct}=="1000", ACTION=="add", RUN+="/usr/local/bin/kvm-auto-launch-helper.sh"
