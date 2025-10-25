@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install script for KVM auto-launch via udev + systemd
-# This sets up event-driven launching of the KVM display when the HDMI Capture device is connected
+# This sets up event-driven launching of the KVM display when the HDMI Capture device is disconnected
 
 set -e
 
@@ -41,11 +41,11 @@ echo ""
 echo "✓ Installation complete!"
 echo ""
 echo "The KVM auto-launch is now active and will:"
-echo "  • Trigger instantly when HDMI Capture device (3188:1000) is detected"
-echo "  • Launch KVM display via udev event + systemd service"
-echo "  • No polling - event-driven only"
+echo "  • Trigger instantly when HDMI Capture device (3188:1000) is REMOVED"
+echo "  • Launch KVM display automatically when you disconnect from the server"
+echo "  • Event-driven via udev + systemd (no polling or background processes)"
 echo ""
-echo "Test by unplugging and replugging the HDMI cable."
+echo "Test by disconnecting the HDMI cable from the server to the KVM module."
 echo ""
 echo "To uninstall:"
 echo "  sudo rm /etc/udev/rules.d/99-kvm-autolaunch.rules"
