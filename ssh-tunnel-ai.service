@@ -1,0 +1,13 @@
+[Unit]
+Description=SSH Tunnel to AI Home Network (Ollama + ComfyUI)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ssh -N -T ai
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

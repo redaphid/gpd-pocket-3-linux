@@ -1,0 +1,17 @@
+Disk /dev/nvme0n1: 953.87 GiB, 1024209543168 bytes, 2000409264 sectors
+Disk model: BIWIN SSD                               
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: gpt
+Disk identifier: A2E16038-475F-404D-B863-8D9B81B48E55
+
+Device           Start        End    Sectors   Size Type
+/dev/nvme0n1p1    2048    2045950    2043903   998M EFI System
+/dev/nvme0n1p3 2045952 2000408575 1998362624 952.9G Linux filesystem
+
+
+Disk /dev/zram0: 15.39 GiB, 16527654912 bytes, 4035072 sectors
+Units: sectors of 1 * 4096 = 4096 bytes
+Sector size (logical/physical): 4096 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
