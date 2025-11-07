@@ -5,9 +5,15 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/ssh -N -T ai
+# More aggressive keepalives to detect dead connections faster
+# TCP keepalive at OS level + SSH keepalive
+ExecStart=/usr/bin/ssh -N -T -o ServerAliveInterval=15 -o ServerAliveCountMax=2 -o ExitOnForwardFailure=yes -o ConnectTimeout=10 -o TCPKeepAlive=yes ai
 Restart=always
-RestartSec=10
+RestartSec=30
+# Kill the SSH process quickly if it hangs
+TimeoutStopSec=5
+# Start timeout to detect if connection is stuck
+TimeoutStartSec=30
 
 [Install]
 WantedBy=default.target
